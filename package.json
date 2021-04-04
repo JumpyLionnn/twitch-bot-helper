@@ -1,0 +1,22 @@
+{
+  "name": "twitch-bot-helper",
+  "version": "1.0.0",
+  "description": "a package to help you make a twitch bot",
+  "main": "main.js",
+  "scripts": {
+    "test": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fwipsity/twitch-bot-helper.git"
+  },
+  "author": "fwipsity",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fwipsity/twitch-bot-helper/issues"
+  },
+  "homepage": "https://github.com/fwipsity/twitch-bot-helper#readme",
+  "dependencies": {
+    "tmi.js": "^1.7.5"
+  }
+}
