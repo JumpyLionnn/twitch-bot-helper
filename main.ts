@@ -52,15 +52,32 @@ class Bot{
             const name = splitedCommand[0].substring(this._prefix.length, splitedCommand[0].length);
             const commandArguments = splitedCommand.splice(1, splitedCommand.length);
             userstate.broadcaster = channel.substring(1, channel.length) === userstate.username;
+            const parsedArguments = [];
             for(let command of this._commands) {
-                if(command.name === name && command.argumentsNumber === commandArguments.length){
+
+                if(command.name === name){
+                    if(commandArguments.length === command.commandArguments.length){
+                        for(let i = 0; i < command.commandArguments.length; i++){
+                            if((command.commandArguments[i] === ArgumentsTypes.number || command.commandArguments[i] === ArgumentsTypes.any) && Number(commandArguments[i])){
+                                parsedArguments.push(Number(commandArguments[i]));
+                            }
+                            else if(command.commandArguments[i] === ArgumentsTypes.string|| command.commandArguments[i] === ArgumentsTypes.any){
+                                parsedArguments.push(commandArguments[i]);
+                            }
+                            else{
+                                this._client.say(channel, this._invalidCommandArgumentsOutput);
+                                return;
+                            }
+                        }
+                    }
+                    else{
+                        this._client.say(channel, this._invalidCommandArgumentsOutput);
+                        return;
+                    }
                     const user = new User(userstate);
-                    const commandInfo = new CommandInfo(channel, commandArguments, user);
+                    const commandInfo = new CommandInfo(channel, parsedArguments, user);
                     command.execute(this, commandInfo);
                     return;
-                }
-                else if(command.argumentsNumber === commandArguments.length){
-                    this._client.say(channel, this._invalidCommandArgumentsOutput);
                 }
             };
             this._client.say(channel, this._invalidCommandOutput);

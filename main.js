@@ -1,16 +1,22 @@
 "use strict";
+var ArgumentsTypes;
+(function (ArgumentsTypes) {
+    ArgumentsTypes[ArgumentsTypes["number"] = 0] = "number";
+    ArgumentsTypes[ArgumentsTypes["string"] = 1] = "string";
+    ArgumentsTypes[ArgumentsTypes["any"] = 2] = "any";
+})(ArgumentsTypes || (ArgumentsTypes = {}));
 class Command {
-    constructor(name, argumentsNumber = 0) {
+    constructor(name, commandArguments = []) {
         this._name = name;
-        this._argumentsNumber = argumentsNumber;
+        this._commandArguments = commandArguments;
     }
     execute(bot, commandInfo) {
     }
     get name() {
         return this._name;
     }
-    get argumentsNumber() {
-        return this._argumentsNumber;
+    get commandArguments() {
+        return this._commandArguments;
     }
 }
 class CommandInfo {
@@ -70,15 +76,31 @@ class Bot {
             const name = splitedCommand[0].substring(this._prefix.length, splitedCommand[0].length);
             const commandArguments = splitedCommand.splice(1, splitedCommand.length);
             userstate.broadcaster = channel.substring(1, channel.length) === userstate.username;
+            const parsedArguments = [];
             for (let command of this._commands) {
-                if (command.name === name && command.argumentsNumber === commandArguments.length) {
+                if (command.name === name) {
+                    if (commandArguments.length === command.commandArguments.length) {
+                        for (let i = 0; i < command.commandArguments.length; i++) {
+                            if ((command.commandArguments[i] === ArgumentsTypes.number || command.commandArguments[i] === ArgumentsTypes.any) && Number(commandArguments[i])) {
+                                parsedArguments.push(Number(commandArguments[i]));
+                            }
+                            else if (command.commandArguments[i] === ArgumentsTypes.string || command.commandArguments[i] === ArgumentsTypes.any) {
+                                parsedArguments.push(commandArguments[i]);
+                            }
+                            else {
+                                this._client.say(channel, this._invalidCommandArgumentsOutput);
+                                return;
+                            }
+                        }
+                    }
+                    else {
+                        this._client.say(channel, this._invalidCommandArgumentsOutput);
+                        return;
+                    }
                     const user = new User(userstate);
-                    const commandInfo = new CommandInfo(channel, commandArguments, user);
+                    const commandInfo = new CommandInfo(channel, parsedArguments, user);
                     command.execute(this, commandInfo);
                     return;
-                }
-                else if (command.argumentsNumber === commandArguments.length) {
-                    this._client.say(channel, this._invalidCommandArgumentsOutput);
                 }
             }
             ;
@@ -152,8 +174,20 @@ class HelloCommand extends Command {
         bot.say(commandInfo.channel, "Hello!");
     }
 }
+class SoCommand extends Command {
+    execute(bot, commandInfo) {
+        if (commandInfo.user.isBroadcaster() || commandInfo.user.isMod()) {
+            bot.say(commandInfo.channel, `Go and check out ${commandInfo.commandArguments[0]} in https://www.twitch.tv/${commandInfo.commandArguments[0]}!`);
+        }
+        else {
+            bot.say(commandInfo.channel, "You dont have the reqiured premisions to performs this command!");
+        }
+    }
+}
 /// <reference path="helloCommand.ts" />
 /// <reference path="clearCommand.ts" />
+/// <reference path="soCommand.ts" />
+/// <reference path="../argumetsType.ts" />
 require("dotenv").config();
 let bot = new Bot({
     username: process.env.TWITCH_USERNAME,
@@ -161,5 +195,6 @@ let bot = new Bot({
     channels: ["jumpylion8"],
     debug: true
 });
-bot.addCommand(new HelloCommand("hello", 0));
-bot.addCommand(new ClearCommand("clear", 0));
+bot.addCommand(new HelloCommand("hello"));
+bot.addCommand(new ClearCommand("clear"));
+bot.addCommand(new SoCommand("so", [ArgumentsTypes.string]));

@@ -1,9 +1,9 @@
 abstract class Command{
     private _name: string;
-    private _argumentsNumber: number;
-    constructor(name: string, argumentsNumber: number = 0){
+    private _commandArguments: ArgumentsTypes[];
+    constructor(name: string, commandArguments: ArgumentsTypes[] = []){
         this._name = name;
-        this._argumentsNumber = argumentsNumber;
+        this._commandArguments = commandArguments;
     }
 
 
@@ -16,7 +16,7 @@ abstract class Command{
         return this._name;
     }
 
-    public get argumentsNumber(): number{
-        return this._argumentsNumber;
+    public get commandArguments(): ArgumentsTypes[]{
+        return this._commandArguments;
     }
 }
