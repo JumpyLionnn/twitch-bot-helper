@@ -110,4 +110,13 @@ class Bot{
             this._client.emoteonlyoff(channel);
         }
     }
+
+    public followerOnly(channel: string, state: boolean, duration?: number){
+        if(state){
+            this._client.followersonly(channel, duration);
+        }
+        else{
+            this._client.followersonlyoff(channel);
+        }
+    }
 }

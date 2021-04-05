@@ -129,6 +129,14 @@ class Bot {
             this._client.emoteonlyoff(channel);
         }
     }
+    followerOnly(channel, state, duration) {
+        if (state) {
+            this._client.followersonly(channel, duration);
+        }
+        else {
+            this._client.followersonlyoff(channel);
+        }
+    }
 }
 var MessageType;
 (function (MessageType) {
