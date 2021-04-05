@@ -103,6 +103,10 @@ class Bot{
         this._client.ban(channel, name, reason);
     }
 
+    public unban(channel: string, name: string){
+        this._client.unban(channel, name);
+    }
+
     public timeout(channel: string, username: string, duration?: number, reason?: string){
         this._client.timeout(channel, username, duration, reason);
     }
