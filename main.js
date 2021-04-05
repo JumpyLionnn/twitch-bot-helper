@@ -67,7 +67,7 @@ class Bot {
             const splitedCommand = message.split(" ");
             const name = splitedCommand[0].substring(this._prefix.length, splitedCommand[0].length);
             const commandArguments = splitedCommand.splice(1, splitedCommand.length);
-            userstate.broadcaster = channel.substring(1, channel.length) === userstate.name;
+            userstate.broadcaster = channel.substring(1, channel.length) === userstate.username;
             this._commands.forEach(command => {
                 if (command.name === name && command.argumentsNumber === commandArguments.length) {
                     const user = new User(userstate);
@@ -87,6 +87,9 @@ class Bot {
     }
     clear(channel) {
         this._client.clear(channel);
+    }
+    ban(channel, name, reason) {
+        this._client.ban(channel, name, reason);
     }
 }
 var MessageType;
@@ -126,12 +129,23 @@ class User {
         return this._color;
     }
 }
+class ClearCommand extends Command {
+    execute(bot, commandInfo) {
+        if (commandInfo.user.isBroadcaster() || commandInfo.user.isMod()) {
+            bot.clear(commandInfo.channel);
+        }
+        else {
+            bot.say(commandInfo.channel, "You dont have the reqiured premisions to performs this command!");
+        }
+    }
+}
 class HelloCommand extends Command {
     execute(bot, commandInfo) {
         bot.say(commandInfo.channel, "Hello!");
     }
 }
 /// <reference path="helloCommand.ts" />
+/// <reference path="clearCommand.ts" />
 require("dotenv").config();
 let bot = new Bot({
     username: process.env.TWITCH_USERNAME,
@@ -140,3 +154,4 @@ let bot = new Bot({
     debug: true
 });
 bot.addCommand(new HelloCommand("hello", 0));
+bot.addCommand(new ClearCommand("clear", 0));

@@ -45,7 +45,7 @@ class Bot{
             const splitedCommand = message.split(" ");
             const name = splitedCommand[0].substring(this._prefix.length, splitedCommand[0].length);
             const commandArguments = splitedCommand.splice(1, splitedCommand.length);
-            userstate.broadcaster = channel.substring(1, channel.length) === userstate.name;
+            userstate.broadcaster = channel.substring(1, channel.length) === userstate.username;
             this._commands.forEach(command => {
                 if(command.name === name && command.argumentsNumber === commandArguments.length){
                     const user = new User(userstate);
@@ -68,5 +68,9 @@ class Bot{
 
     public clear(channel: string){
         this._client.clear(channel);
+    }
+
+    public ban(channel: string, name: string, reason?:string){
+        this._client.ban(channel, name, reason);
     }
 }
