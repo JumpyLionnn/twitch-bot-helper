@@ -121,6 +121,9 @@ class Bot {
     ban(channel, name, reason) {
         this._client.ban(channel, name, reason);
     }
+    timeout(channel, username, duration, reason) {
+        this._client.timeout(channel, username, duration, reason);
+    }
     emoteOnly(channel, state) {
         if (state) {
             this._client.emoteonly(channel);
@@ -163,6 +166,14 @@ class Bot {
         }
         else {
             this._client.slowoff(channel);
+        }
+    }
+    subscriberOnly(channel, state, duration) {
+        if (state) {
+            this._client.subscribers(channel, duration);
+        }
+        else {
+            this._client.subscribersoff(channel);
         }
     }
 }
