@@ -4,7 +4,7 @@ class Command {
         this._name = name;
         this._argumentsNumber = argumentsNumber;
     }
-    execute(commandInfo) {
+    execute(bot, commandInfo) {
     }
     get name() {
         return this._name;
@@ -36,7 +36,7 @@ class Bot {
         this._client = new tmi.Client({
             options: {
                 debug: config.debug || false,
-                messagesLogLevel: config.messagesLogLevel || "info"
+                messagesLogLevel: config.messagesLogLevel
             },
             connection: {
                 reconnect: config.reconnect || true,
@@ -63,18 +63,21 @@ class Bot {
             return;
         }
         if (message.startsWith(this._prefix)) {
-            const splitedCommand = this._prefix.split(" ");
-            const name = splitedCommand[0].substring(1, splitedCommand[0].length);
-            const commandArguments = splitedCommand.splice(0, 1);
+            const splitedCommand = message.split(" ");
+            const name = splitedCommand[0].substring(this._prefix.length, splitedCommand[0].length);
+            const commandArguments = splitedCommand.splice(1, splitedCommand.length);
             userstate.broadcaster = channel.substring(1, channel.length) === userstate.name;
             this._commands.forEach(command => {
                 if (command.name === name && command.argumentsNumber === commandArguments.length) {
                     const user = new User(userstate);
                     const commandInfo = new CommandInfo(channel, commandArguments, user);
-                    command.execute(commandInfo);
+                    command.execute(this, commandInfo);
                 }
             });
         }
+    }
+    say(channel, message) {
+        this._client.say(channel, message);
     }
 }
 class User {
@@ -109,3 +112,17 @@ class User {
         return this._color;
     }
 }
+class HelloCommand extends Command {
+    execute(bot, commandInfo) {
+        bot.say(commandInfo.channel, "Hello!");
+    }
+}
+/// <reference path="helloCommand.ts" />
+require("dotenv").config();
+let bot = new Bot({
+    username: process.env.TWITCH_USERNAME,
+    password: process.env.TWITCH_TOKEN,
+    channels: ["jumpylion8"],
+    debug: true
+});
+bot.addCommand(new HelloCommand("hello", 0));

@@ -7,7 +7,7 @@ abstract class Command{
     }
 
 
-    public execute(commandInfo: CommandInfo){
+    public execute(bot: Bot, commandInfo: CommandInfo){
 
     }
 
