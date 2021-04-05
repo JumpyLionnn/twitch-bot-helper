@@ -7,6 +7,7 @@ class Bot{
 
     private _invalidCommandOutput: string;
     private _invalidCommandArgumentsOutput: string;
+
     constructor(config: botConfig){
         this._client = new tmi.Client({
             options: {
@@ -128,11 +129,21 @@ class Bot{
         this._client.join(channel);
     }
 
+    public removeChannel(channel: string){
+        this._client.part(channel);
+    }
+
     public mod(channel: string, username: string){
         this._client.mod(channel, username);
     }
 
     public get mods(): string[]{
         return this._client.mods();
+    }
+
+    public ping(callback: Function){
+        this._client.ping().then((data: number[]) => {
+            callback(data[0]);
+        })
     }
 }

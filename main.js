@@ -137,6 +137,26 @@ class Bot {
             this._client.followersonlyoff(channel);
         }
     }
+    host(channel, targetChannel) {
+        this._client.host(channel, targetChannel);
+    }
+    addChannel(channel) {
+        this._client.join(channel);
+    }
+    removeChannel(channel) {
+        this._client.part(channel);
+    }
+    mod(channel, username) {
+        this._client.mod(channel, username);
+    }
+    get mods() {
+        return this._client.mods();
+    }
+    ping(callback) {
+        this._client.ping().then((data) => {
+            callback(data[0]);
+        });
+    }
 }
 var MessageType;
 (function (MessageType) {
