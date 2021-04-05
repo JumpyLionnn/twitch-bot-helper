@@ -121,6 +121,14 @@ class Bot {
     ban(channel, name, reason) {
         this._client.ban(channel, name, reason);
     }
+    emoteOnly(channel, state) {
+        if (state) {
+            this._client.emoteonly(channel);
+        }
+        else {
+            this._client.emoteonlyoff(channel);
+        }
+    }
 }
 var MessageType;
 (function (MessageType) {
@@ -169,6 +177,14 @@ class ClearCommand extends Command {
         }
     }
 }
+class EmoteCommand extends Command {
+    execute(bot, commandInfo) {
+        bot.emoteOnly(commandInfo.channel, true);
+        setTimeout(() => {
+            bot.emoteOnly(commandInfo.channel, false);
+        }, commandInfo.commandArguments[0] * 1000);
+    }
+}
 class HelloCommand extends Command {
     execute(bot, commandInfo) {
         bot.say(commandInfo.channel, "Hello!");
@@ -177,7 +193,7 @@ class HelloCommand extends Command {
 class SoCommand extends Command {
     execute(bot, commandInfo) {
         if (commandInfo.user.isBroadcaster() || commandInfo.user.isMod()) {
-            bot.say(commandInfo.channel, `Go and check out ${commandInfo.commandArguments[0]} in https://www.twitch.tv/${commandInfo.commandArguments[0]}!`);
+            bot.say(commandInfo.channel, `Go and check out ${commandInfo.commandArguments[0]} in https://www.twitch.tv/${commandInfo.commandArguments[0]}!`, MessageType.action);
         }
         else {
             bot.say(commandInfo.channel, "You dont have the reqiured premisions to performs this command!");
@@ -187,14 +203,16 @@ class SoCommand extends Command {
 /// <reference path="helloCommand.ts" />
 /// <reference path="clearCommand.ts" />
 /// <reference path="soCommand.ts" />
+/// <reference path="emoteChatCommand.ts" />
 /// <reference path="../argumetsType.ts" />
 require("dotenv").config();
 let bot = new Bot({
     username: process.env.TWITCH_USERNAME,
     password: process.env.TWITCH_TOKEN,
     channels: ["jumpylion8"],
-    debug: true
+    debug: true,
 });
 bot.addCommand(new HelloCommand("hello"));
 bot.addCommand(new ClearCommand("clear"));
 bot.addCommand(new SoCommand("so", [ArgumentsTypes.string]));
+bot.addCommand(new EmoteCommand("emoteonlychat", [ArgumentsTypes.number]));

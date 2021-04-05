@@ -101,4 +101,13 @@ class Bot{
     public ban(channel: string, name: string, reason?:string){
         this._client.ban(channel, name, reason);
     }
+
+    public emoteOnly(channel:string, state: boolean){
+        if(state){
+            this._client.emoteonly(channel);
+        }
+        else{
+            this._client.emoteonlyoff(channel);
+        }
+    }
 }
