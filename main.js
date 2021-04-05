@@ -121,6 +121,9 @@ class Bot {
     ban(channel, name, reason) {
         this._client.ban(channel, name, reason);
     }
+    unban(channel, name) {
+        this._client.unban(channel, name);
+    }
     timeout(channel, username, duration, reason) {
         this._client.timeout(channel, username, duration, reason);
     }
@@ -142,6 +145,9 @@ class Bot {
     }
     host(channel, targetChannel) {
         this._client.host(channel, targetChannel);
+    }
+    unhost(channel) {
+        this._client.unhost(channel);
     }
     addChannel(channel) {
         this._client.join(channel);

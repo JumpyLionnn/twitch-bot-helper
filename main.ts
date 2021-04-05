@@ -133,6 +133,10 @@ class Bot{
         this._client.host(channel, targetChannel);
     }
 
+    public unhost(channel: string){
+        this._client.unhost(channel);
+    }
+
     public addChannel(channel: string){
         this._client.join(channel);
     }
