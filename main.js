@@ -78,12 +78,15 @@ class Bot {
         }
     }
     say(channel, message, type = MessageType.normal) {
-        if (MessageType.normal) {
+        if (MessageType.normal === type) {
             this._client.say(channel, message);
         }
         else {
             this._client.action(channel, message);
         }
+    }
+    clear(channel) {
+        this._client.clear(channel);
     }
 }
 var MessageType;

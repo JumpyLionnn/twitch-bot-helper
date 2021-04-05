@@ -58,12 +58,15 @@ class Bot{
 
 
     public say(channel: string, message: string, type: MessageType = MessageType.normal){
-        if(MessageType.normal){
+        if(MessageType.normal === type){
             this._client.say(channel, message);
         }
         else{
             this._client.action(channel, message);
-        }
-        
+        } 
+    }
+
+    public clear(channel: string){
+        this._client.clear(channel);
     }
 }
