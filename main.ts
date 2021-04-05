@@ -119,4 +119,20 @@ class Bot{
             this._client.followersonlyoff(channel);
         }
     }
+
+    public host(channel: string, targetChannel: string){
+        this._client.host(channel, targetChannel);
+    }
+
+    public addChannel(channel: string){
+        this._client.join(channel);
+    }
+
+    public mod(channel: string, username: string){
+        this._client.mod(channel, username);
+    }
+
+    public get mods(): string[]{
+        return this._client.mods();
+    }
 }
