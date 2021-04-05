@@ -52,6 +52,8 @@ class Bot {
             this._client.color(config.color);
         }
         this._prefix = config.prefix || "!";
+        this._invalidCommandOutput = config.invalidCommandOutput || "Invalid command!";
+        this._invalidCommandArgumentsOutput = config.invalidCommandArgumentsOutput || "Invalid command arguments!";
         this._client.on("message", this.messageHandler.bind(this));
         this._client.connect();
     }
@@ -68,13 +70,19 @@ class Bot {
             const name = splitedCommand[0].substring(this._prefix.length, splitedCommand[0].length);
             const commandArguments = splitedCommand.splice(1, splitedCommand.length);
             userstate.broadcaster = channel.substring(1, channel.length) === userstate.username;
-            this._commands.forEach(command => {
+            for (let command of this._commands) {
                 if (command.name === name && command.argumentsNumber === commandArguments.length) {
                     const user = new User(userstate);
                     const commandInfo = new CommandInfo(channel, commandArguments, user);
                     command.execute(this, commandInfo);
+                    return;
                 }
-            });
+                else if (command.argumentsNumber === commandArguments.length) {
+                    this._client.say(channel, this._invalidCommandArgumentsOutput);
+                }
+            }
+            ;
+            this._client.say(channel, this._invalidCommandOutput);
         }
     }
     say(channel, message, type = MessageType.normal) {
