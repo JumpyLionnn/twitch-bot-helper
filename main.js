@@ -157,6 +157,14 @@ class Bot {
             callback(data[0]);
         });
     }
+    slowMode(channel, state, seconds) {
+        if (state) {
+            this._client.slow(channel, seconds);
+        }
+        else {
+            this._client.slowoff(channel);
+        }
+    }
 }
 var MessageType;
 (function (MessageType) {
