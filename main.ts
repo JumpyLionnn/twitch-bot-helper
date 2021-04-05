@@ -40,7 +40,7 @@ class Bot{
 
     private messageHandler(channel: string, userstate: any, message: string, self: any){
         if(self){return;}
-
+        message = message.trim();
         if(message.startsWith(this._prefix)){
             const splitedCommand = message.split(" ");
             const name = splitedCommand[0].substring(this._prefix.length, splitedCommand[0].length);
@@ -57,7 +57,13 @@ class Bot{
     }
 
 
-    public say(channel: string, message: string){
-        this._client.say(channel, message);
+    public say(channel: string, message: string, type: MessageType = MessageType.normal){
+        if(MessageType.normal){
+            this._client.say(channel, message);
+        }
+        else{
+            this._client.action(channel, message);
+        }
+        
     }
 }

@@ -62,6 +62,7 @@ class Bot {
         if (self) {
             return;
         }
+        message = message.trim();
         if (message.startsWith(this._prefix)) {
             const splitedCommand = message.split(" ");
             const name = splitedCommand[0].substring(this._prefix.length, splitedCommand[0].length);
@@ -76,10 +77,20 @@ class Bot {
             });
         }
     }
-    say(channel, message) {
-        this._client.say(channel, message);
+    say(channel, message, type = MessageType.normal) {
+        if (MessageType.normal) {
+            this._client.say(channel, message);
+        }
+        else {
+            this._client.action(channel, message);
+        }
     }
 }
+var MessageType;
+(function (MessageType) {
+    MessageType[MessageType["normal"] = 0] = "normal";
+    MessageType[MessageType["action"] = 1] = "action";
+})(MessageType || (MessageType = {}));
 class User {
     constructor(userstate) {
         this._name = userstate.username;
