@@ -149,8 +149,12 @@ class Bot{
         this._client.mod(channel, username);
     }
 
-    public get mods(): string[]{
-        return this._client.mods();
+    public unmod(channel: string, username: string){
+        this._client.unmod(channel, username);
+    }
+
+    public mods(channel: string): string[]{
+        return this._client.mods(channel);
     }
 
     public ping(callback: Function){
@@ -175,5 +179,21 @@ class Bot{
         else{
             this._client.subscribersoff(channel);
         }
+    }
+
+    public vip(channel: string, username: string){
+        this._client.vip(channel, username);
+    }
+
+    public unvip(channel: string, username: string){
+        this._client.unvip(channel, username);
+    }
+
+    public vips(channel: string): string[]{
+        return this._client.vips(channel);
+    }
+
+    public whisper(username: string, message: string){
+        this._client.whisper(username, message);
     }
 }

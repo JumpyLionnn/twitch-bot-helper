@@ -158,8 +158,11 @@ class Bot {
     mod(channel, username) {
         this._client.mod(channel, username);
     }
-    get mods() {
-        return this._client.mods();
+    unmod(channel, username) {
+        this._client.unmod(channel, username);
+    }
+    mods(channel) {
+        return this._client.mods(channel);
     }
     ping(callback) {
         this._client.ping().then((data) => {
@@ -181,6 +184,18 @@ class Bot {
         else {
             this._client.subscribersoff(channel);
         }
+    }
+    vip(channel, username) {
+        this._client.vip(channel, username);
+    }
+    unvip(channel, username) {
+        this._client.unvip(channel, username);
+    }
+    vips(channel) {
+        return this._client.vips(channel);
+    }
+    whisper(username, message) {
+        this._client.whisper(username, message);
     }
 }
 var MessageType;
