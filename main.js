@@ -216,14 +216,12 @@ class Bot {
         else {
             throw new Error("Cannt add a browser source since there is no server.");
         }
-        this._browserSources.push(browserSource);
     }
     /**
      *
      */
     onSocketConnection(socket) {
         socket.on("sing-in", (data) => {
-            // do stuff
         });
     }
 }
