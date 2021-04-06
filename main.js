@@ -42,6 +42,7 @@ const socketIO = require("socket.io");
 class Bot {
     constructor(config) {
         this._commands = [];
+        this._browserSources = [];
         this._client = new tmi.Client({
             options: {
                 debug: config.debug || false,
@@ -65,6 +66,7 @@ class Bot {
         this._invalidCommandArgumentsOutput = config.invalidCommandArgumentsOutput || "Invalid command arguments!";
         if (config.server) {
             this._io = socketIO(http.createServer(express()));
+            this._io.on("connection", this.onSocketConnection.bind(this));
             this._io.listen(config.server.port || 3000);
         }
         this._client.on("message", this.messageHandler.bind(this));
@@ -204,8 +206,24 @@ class Bot {
     whisper(username, message) {
         this._client.whisper(username, message);
     }
+    addBrowserSource(browserSource) {
+        this._browserSources.push(browserSource);
+    }
     on(eventType, callback) {
-        this._client.on(eventType, callback);
+        if (this._io) {
+            this._client.on(eventType, callback);
+        }
+        else {
+            throw new Error("Cannt add a browser source since there is no server.");
+        }
+    }
+    /**
+     *
+     */
+    onSocketConnection(socket) {
+        socket.on("sing-in", (data) => {
+            // do stuff
+        });
     }
 }
 var MessageType;

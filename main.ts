@@ -16,6 +16,8 @@ class Bot{
 
     private _io: any;
 
+    private _browserSources: BrowserSource[] = [];
+
     constructor(config: botConfig){
         this._client = new tmi.Client({
             options: {
@@ -43,6 +45,8 @@ class Bot{
 
         if(config.server){
             this._io = socketIO(http.createServer(express()));
+
+            this._io.on("connection", this.onSocketConnection.bind(this));
             
             this._io.listen(config.server.port || 3000);
         }
@@ -212,7 +216,29 @@ class Bot{
         this._client.whisper(username, message);
     }
 
+    public addBrowserSource(browserSource: BrowserSource){
+        this._browserSources.push(browserSource);
+    }
+
     public on(eventType: string, callback: Function){
-        this._client.on(eventType, callback);
+        if(this._io){
+            this._client.on(eventType, callback);
+        }
+        else{
+            throw new Error("Cannt add a browser source since there is no server.");
+        }
+        
+    }
+
+
+
+
+    /**
+     * 
+     */
+    public onSocketConnection(socket: any){
+        socket.on("sing-in", (data: any)=>{
+            // do stuff
+        });
     }
 }
