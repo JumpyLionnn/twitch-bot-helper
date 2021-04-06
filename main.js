@@ -222,6 +222,8 @@ class Bot {
      */
     onSocketConnection(socket) {
         socket.on("sing-in", (data) => {
+            for (let browserSource in this._browserSources) {
+            }
         });
     }
 }
@@ -263,7 +265,11 @@ class User {
     }
 }
 class BrowserSource {
-    constructor(browserSourceData) {
+    constructor(name, browserSourceData) {
+        this._name = name;
+    }
+    get name() {
+        return this._name;
     }
 }
 class ClearCommand extends Command {

@@ -237,7 +237,9 @@ class Bot{
      */
     private onSocketConnection(socket: any){
         socket.on("sing-in", (data: any)=>{
-            
+            for(let browserSource in this._browserSources){
+                
+            }
         });
     }
 }
