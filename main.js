@@ -222,9 +222,20 @@ class Bot {
      */
     onSocketConnection(socket) {
         socket.on("sing-in", (data) => {
-            for (let browserSource in this._browserSources) {
+            if (data.type === "browserSource") {
+                for (let browserSource of this._browserSources) {
+                    if (browserSource.name === data.name) {
+                        socket.join(browserSource.name);
+                    }
+                }
             }
         });
+    }
+    send(name, messageType, content) {
+        this._io.to(name).emit(messageType, content);
+    }
+    onBrowserSource(name, eventType, callback) {
+        this._io.to(name).on(eventType, callback);
     }
 }
 var MessageType;
@@ -305,10 +316,17 @@ class SoCommand extends Command {
         }
     }
 }
+class SayCommand extends Command {
+    execute(bot, commandInfo) {
+        console.log("executed say command");
+        bot.send("say", "say", { message: commandInfo.commandArguments[0] });
+    }
+}
 /// <reference path="helloCommand.ts" />
 /// <reference path="clearCommand.ts" />
 /// <reference path="soCommand.ts" />
 /// <reference path="emoteChatCommand.ts" />
+/// <reference path="sayCommand.ts" />
 /// <reference path="../argumetsType.ts" />
 require("dotenv").config();
 let bot = new Bot({
@@ -321,3 +339,4 @@ bot.addCommand(new HelloCommand("hello"));
 bot.addCommand(new ClearCommand("clear"));
 bot.addCommand(new SoCommand("so", [ArgumentsTypes.string]));
 bot.addCommand(new EmoteCommand("emoteonlychat", [ArgumentsTypes.number]));
+bot.addCommand(new SayCommand("say", [ArgumentsTypes.string]));

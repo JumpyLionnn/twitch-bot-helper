@@ -18,6 +18,7 @@ class Bot{
 
     private _browserSources: BrowserSource[] = [];
 
+
     constructor(config: botConfig){
         this._client = new tmi.Client({
             options: {
@@ -237,9 +238,22 @@ class Bot{
      */
     private onSocketConnection(socket: any){
         socket.on("sing-in", (data: any)=>{
-            for(let browserSource in this._browserSources){
-                
+            if(data.type === "browserSource"){
+                for(let browserSource of this._browserSources){
+                    if(browserSource.name === data.name){
+                        socket.join(browserSource.name);
+                    }
+                }
             }
+            
         });
+    }
+
+    public send(name: string, messageType: string, content: any){
+        this._io.to(name).emit(messageType, content);
+    }
+
+    public onBrowserSource(name: string, eventType: string, callback: Function){
+        this._io.to(name).on(eventType, callback);
     }
 }
