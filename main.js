@@ -36,6 +36,9 @@ class CommandInfo {
     }
 }
 const tmi = require("tmi.js");
+const express = require("express");
+const http = require("http");
+const socketIO = require("socket.io");
 class Bot {
     constructor(config) {
         this._commands = [];
@@ -60,6 +63,10 @@ class Bot {
         this._prefix = config.prefix || "!";
         this._invalidCommandOutput = config.invalidCommandOutput || "Invalid command!";
         this._invalidCommandArgumentsOutput = config.invalidCommandArgumentsOutput || "Invalid command arguments!";
+        if (config.server) {
+            this._io = socketIO(http.createServer(express()));
+            this._io.listen(config.server.port || 3000);
+        }
         this._client.on("message", this.messageHandler.bind(this));
         this._client.connect();
     }
@@ -236,6 +243,10 @@ class User {
     }
     get color() {
         return this._color;
+    }
+}
+class BrowserSource {
+    constructor(browserSourceData) {
     }
 }
 class ClearCommand extends Command {

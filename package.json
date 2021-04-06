@@ -19,6 +19,8 @@
     "homepage": "https://github.com/fwipsity/twitch-bot-helper#readme",
     "dependencies": {
         "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "socket.io": "^4.0.1",
         "tmi.js": "^1.7.5"
     },
     "devDependencies": {

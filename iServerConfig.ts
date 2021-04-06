@@ -1,0 +1,3 @@
+interface ServerConfig{
+    port?: number
+}

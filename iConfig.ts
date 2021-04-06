@@ -11,4 +11,6 @@ interface botConfig{
     prefix?: string;
     invalidCommandOutput?: string;
     invalidCommandArgumentsOutput?: string;
+
+    server?: ServerConfig;
 }

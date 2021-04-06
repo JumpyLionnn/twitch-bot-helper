@@ -1,5 +1,11 @@
 const tmi = require("tmi.js");
 
+const express = require("express");
+const http = require("http");
+
+const socketIO = require("socket.io");
+
+
 class Bot{
     private _client: any;
     private _commands: Command[] = [];
@@ -7,6 +13,8 @@ class Bot{
 
     private _invalidCommandOutput: string;
     private _invalidCommandArgumentsOutput: string;
+
+    private _io: any;
 
     constructor(config: botConfig){
         this._client = new tmi.Client({
@@ -33,12 +41,19 @@ class Bot{
         this._invalidCommandOutput = config.invalidCommandOutput || "Invalid command!";
         this._invalidCommandArgumentsOutput = config.invalidCommandArgumentsOutput || "Invalid command arguments!";
 
+        if(config.server){
+            this._io = socketIO(http.createServer(express()));
+            
+            this._io.listen(config.server.port || 3000);
+        }
+
+        
+
         this._client.on("message", this.messageHandler.bind(this));
 
 
         this._client.connect();
     }
-
 
     public addCommand(command: Command){
         this._commands.push(command);
