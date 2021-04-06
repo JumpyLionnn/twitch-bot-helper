@@ -196,4 +196,8 @@ class Bot{
     public whisper(username: string, message: string){
         this._client.whisper(username, message);
     }
+
+    public on(eventType: string, callback: Function){
+        this._client.on(eventType, callback);
+    }
 }

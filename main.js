@@ -197,6 +197,9 @@ class Bot {
     whisper(username, message) {
         this._client.whisper(username, message);
     }
+    on(eventType, callback) {
+        this._client.on(eventType, callback);
+    }
 }
 var MessageType;
 (function (MessageType) {
