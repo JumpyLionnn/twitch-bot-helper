@@ -216,18 +216,18 @@ class Bot{
         this._client.whisper(username, message);
     }
 
-    public addBrowserSource(browserSource: BrowserSource){
-        this._browserSources.push(browserSource);
+    public on(eventType: string, callback: Function){
+        this._client.on(eventType, callback);  
     }
 
-    public on(eventType: string, callback: Function){
+    public addBrowserSource(browserSource: BrowserSource){
         if(this._io){
-            this._client.on(eventType, callback);
+            this._browserSources.push(browserSource);
         }
         else{
             throw new Error("Cannt add a browser source since there is no server.");
         }
-        
+        this._browserSources.push(browserSource);
     }
 
 
@@ -236,7 +236,7 @@ class Bot{
     /**
      * 
      */
-    public onSocketConnection(socket: any){
+    private onSocketConnection(socket: any){
         socket.on("sing-in", (data: any)=>{
             // do stuff
         });

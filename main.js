@@ -206,16 +206,17 @@ class Bot {
     whisper(username, message) {
         this._client.whisper(username, message);
     }
-    addBrowserSource(browserSource) {
-        this._browserSources.push(browserSource);
-    }
     on(eventType, callback) {
+        this._client.on(eventType, callback);
+    }
+    addBrowserSource(browserSource) {
         if (this._io) {
-            this._client.on(eventType, callback);
+            this._browserSources.push(browserSource);
         }
         else {
             throw new Error("Cannt add a browser source since there is no server.");
         }
+        this._browserSources.push(browserSource);
     }
     /**
      *
