@@ -52,6 +52,9 @@ class Bot{
 
             this._io.on("connection", this.onSocketConnection.bind(this));
             
+            if(this._debug){
+                console.log(`starting server on port ${config.server.port || 3000}...`)
+            }
             this._io.listen(config.server.port || 3000);
         }
 
@@ -240,7 +243,7 @@ class Bot{
      * 
      */
     private onSocketConnection(socket: any){
-        socket.on("sing-in", (data: any)=>{
+        socket.on("sign-in", (data: any)=>{
             if(data.type === "browserSource"){
                 for(let browserSource of this._browserSources){
                     if(browserSource.name === data.name){
@@ -253,10 +256,15 @@ class Bot{
     }
 
     public send(name: string, messageType: string, content: any){
-        if(this._debug){
-            console.log(`A ${messageType} was sent to ${name}`);
+        if(this._io){
+            if(this._debug){
+                console.log(`A ${messageType} message was sent to ${name}.`);
+            }
+            this._io.to(name).emit(messageType, content);
         }
-        this._io.to(name).emit(messageType, content);
+        else{
+            throw new Error("Cannt send data to a browser source since there is no server.");
+        }
     }
 
     public onBrowserSource(name: string, eventType: string, callback: Function){
