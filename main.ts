@@ -10,6 +10,7 @@ class Bot{
     private _client: any;
     private _commands: Command[] = [];
     private _prefix: string;
+    private _debug: boolean;
 
     private _invalidCommandOutput: string;
     private _invalidCommandArgumentsOutput: string;
@@ -40,6 +41,8 @@ class Bot{
         }
 
         this._prefix = config.prefix || "!";
+
+        this._debug = config.debug || false;
 
         this._invalidCommandOutput = config.invalidCommandOutput || "Invalid command!";
         this._invalidCommandArgumentsOutput = config.invalidCommandArgumentsOutput || "Invalid command arguments!";
@@ -250,6 +253,9 @@ class Bot{
     }
 
     public send(name: string, messageType: string, content: any){
+        if(this._debug){
+            console.log(`A ${messageType} was sent to ${name}`);
+        }
         this._io.to(name).emit(messageType, content);
     }
 

@@ -62,6 +62,7 @@ class Bot {
             this._client.color(config.color);
         }
         this._prefix = config.prefix || "!";
+        this._debug = config.debug || false;
         this._invalidCommandOutput = config.invalidCommandOutput || "Invalid command!";
         this._invalidCommandArgumentsOutput = config.invalidCommandArgumentsOutput || "Invalid command arguments!";
         if (config.server) {
@@ -232,6 +233,9 @@ class Bot {
         });
     }
     send(name, messageType, content) {
+        if (this._debug) {
+            console.log(`A ${messageType} was sent to ${name}`);
+        }
         this._io.to(name).emit(messageType, content);
     }
     onBrowserSource(name, eventType, callback) {
@@ -334,6 +338,9 @@ let bot = new Bot({
     password: process.env.TWITCH_TOKEN,
     channels: ["jumpylion8"],
     debug: true,
+    server: {
+        port: 3000
+    }
 });
 bot.addCommand(new HelloCommand("hello"));
 bot.addCommand(new ClearCommand("clear"));
