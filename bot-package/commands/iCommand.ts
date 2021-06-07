@@ -20,3 +20,9 @@ abstract class Command{
         return this._commandArguments;
     }
 }
+
+interface iCommand{
+    name: string;
+    commandArguments: ArgumentsTypes[];
+    executor: (bot: Bot, commandInfo: CommandInfo)=>void;
+}

@@ -1,5 +1,5 @@
 interface BrowserSourceData{
     htmlPath: string,
-    jsPath: string[],
-    cssPath: string[] 
+    jsPath?: string[],
+    cssPath?: string[] 
 }

@@ -3,22 +3,22 @@ const tmi = require("tmi.js");
 const express = require("express");
 const http = require("http");
 
-const socketIO = require("socket.io");
+const { Server } = require("socket.io");
 
 
 class Bot{
     private _client: any;
-    private _commands: Command[] = [];
+    private _commands: iCommand[] = [];
     private _prefix: string;
     private _debug: boolean;
 
     private _invalidCommandOutput: string;
     private _invalidCommandArgumentsOutput: string;
 
+    private _httpServer: any;
     private _io: any;
 
     private _browserSources: BrowserSource[] = [];
-
 
     constructor(config: botConfig){
         this._client = new tmi.Client({
@@ -44,18 +44,27 @@ class Bot{
 
         this._debug = config.debug || false;
 
-        this._invalidCommandOutput = config.invalidCommandOutput || "Invalid command!";
-        this._invalidCommandArgumentsOutput = config.invalidCommandArgumentsOutput || "Invalid command arguments!";
+        this._invalidCommandOutput = config.invalidCommandOutput === "" ? "" : "Invalid command!";
+        this._invalidCommandArgumentsOutput = config.invalidCommandArgumentsOutput === "" ? "" : "Invalid command arguments!";
 
         if(config.server){
-            this._io = socketIO(http.createServer(express()));
+            this._httpServer = express();
+            this._io = new Server(http.createServer(this._httpServer));
 
             this._io.on("connection", this.onSocketConnection.bind(this));
+            console.log("setup server")
+            
             
             if(this._debug){
-                console.log(`starting server on port ${config.server.port || 3000}...`)
+                console.log(`starting server on port ${config.server.port || 3000}...`);
             }
-            this._io.listen(config.server.port || 3000);
+            
+            this._io.listen(config.server.port || 3000, {
+                cors: {
+                    origin: "*",
+                },
+            });
+            
         }
 
         
@@ -66,7 +75,7 @@ class Bot{
         this._client.connect();
     }
 
-    public addCommand(command: Command){
+    public addCommand(command: iCommand){
         this._commands.push(command);
     }
 
@@ -92,22 +101,29 @@ class Bot{
                                 parsedArguments.push(commandArguments[i]);
                             }
                             else{
-                                this._client.say(channel, this._invalidCommandArgumentsOutput);
+                                if(!(this._invalidCommandArgumentsOutput === "")){
+                                    this._client.say(channel, this._invalidCommandArgumentsOutput);
+                                }
                                 return;
                             }
                         }
                     }
                     else{
-                        this._client.say(channel, this._invalidCommandArgumentsOutput);
+                        if(!(this._invalidCommandArgumentsOutput === "")){
+                            this._client.say(channel, this._invalidCommandArgumentsOutput);
+                        }
                         return;
                     }
                     const user = new User(userstate);
                     const commandInfo = new CommandInfo(channel, parsedArguments, user);
-                    command.execute(this, commandInfo);
+                    command.executor(this, commandInfo);
                     return;
                 }
             };
-            this._client.say(channel, this._invalidCommandOutput);
+            if(this._invalidCommandOutput !== ""){
+                this._client.say(channel, this._invalidCommandOutput);
+            }
+            
         }
     }
 
@@ -229,6 +245,10 @@ class Bot{
 
     public addBrowserSource(browserSource: BrowserSource){
         if(this._io){
+            this._httpServer.get("/test/overlay/index.html", (req: any, res: any) => {
+                console.log("get")
+                res.sendFile(__dirname + browserSource.data.htmlPath);
+            });
             this._browserSources.push(browserSource);
         }
         else{
@@ -236,13 +256,12 @@ class Bot{
         }
     }
 
-
-
-
-    /**
-     * 
-     */
     private onSocketConnection(socket: any){
+
+        if(this._debug){
+            console.log(`New client has connected...`);
+        }
+
         socket.on("sign-in", (data: any)=>{
             if(data.type === "browserSource"){
                 for(let browserSource of this._browserSources){
